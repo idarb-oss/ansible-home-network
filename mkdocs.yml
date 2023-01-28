@@ -1,0 +1,58 @@
+site_name: Ansible Home
+copyright: Copyright &copy; 2023 - 2023 Idar Bergli
+repo_name: idarb-oss/ansible-home-network
+repo_url: https://github.com/idarb-oss/ansible-home-network
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: red
+      accent: indigo
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: red
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    code: Roboto Mono
+  language: en
+  icon:
+    logo: fontawesome/solid/paragraph
+    repo: fontawesome/brands/github-alt
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - header.autohide
+
+plugins:
+  - search:
+      prebuild_index: true
+  - git-revision-date:
+
+extra:
+  version:
+    provider: mike
+
+markdown_extensions:
+  - footnotes
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.tabbed
+  - pymdownx.emoji
+  - pymdownx.tasklist:
+      custom_checkbox: true

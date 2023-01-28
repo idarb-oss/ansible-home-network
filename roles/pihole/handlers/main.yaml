@@ -1,0 +1,6 @@
+- name: Restart pi-hole
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/pihole/"
+    build: false
+    restarted: true
+  become: false

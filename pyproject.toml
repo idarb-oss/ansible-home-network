@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ansible-home"
+version = "0.1.0"
+description = ""
+authors = ["Idar Bergli <idarb@pm.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "ansible_home"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mkdocs = "^1.4.2"
+mkdocs-material = "^9.0.6"
+mkdocs-git-revision-date-plugin = "^0.3.2"
+mike = "^1.1.2"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

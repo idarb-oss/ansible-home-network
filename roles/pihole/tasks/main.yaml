@@ -1,0 +1,62 @@
+- name: Disable systemd-resolved
+  become: true
+  ansible.builtin.command: sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
+  when: ansible_facts.os_family == "Debian"
+
+- name: Remove resolv.conf to symlink to systemd resolve.
+  ansible.builtin.command: sh -c 'rm /etc/resolv.conf'
+  become: true
+  when: ansible_facts.os_family == "Debian"
+
+- name: Symlink systemd resolve.conf
+  ansible.builtin.command: ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+  become: true
+  when: ansible_facts.os_family == "Debian"
+
+- name: Restart systemd-resoved
+  ansible.builtin.command: systemctl restart systemd-resolved
+  become: true
+  when: ansible_facts.os_family == "Debian"
+
+- name: Create Pi-hole folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/pihole"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Determine Pi-hole host IPs (single mode)
+  ansible.builtin.set_fact:
+    pihole_local_ipv4: "{{ ansible_host }}"
+  when: pihole_single_mode
+
+- name: Copy Pi-hole docker-compose template to Pi.
+  ansible.builtin.template:
+    src: templates/docker-compose.yaml.j2
+    dest: "{{ config_dir }}/pihole/docker-compose.yaml"
+    mode: '0640'
+    force: true
+  become: false
+  notify: Restart pi-hole
+
+- name: Ensure Pi-hole is running.
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/pihole/"
+    build: false
+  become: false
+
+- name: Check pihole container
+  ansible.builtin.uri:
+    url: http://localhost
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 10
+
+- name: Remove old image versions
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: false
