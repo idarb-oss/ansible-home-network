@@ -14,5 +14,6 @@
       loop:
         - config/general.yaml
         - config/pihole.yaml
+        - config/domain.yaml
   roles:
     - pihole

@@ -1,0 +1,3 @@
+# Domain names configuration (related services need to be enabled).
+domain_name: home.local
+domain_pihole: pihole
