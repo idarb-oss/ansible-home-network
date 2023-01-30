@@ -1,0 +1,35 @@
+- name: Download kms plugin
+  ansible.builtin.get_url:
+    url: "{{ yubico_kms_plugin_url }}/v{{ yubico_kms_plugin_version }}/step-kms-plugin_{{ yubico_kms_plugin_version }}_linux_arm64.tar.gz"
+    dest: /tmp/
+    mode: "0755"
+
+- name: Download step-ca
+  ansible.builtin.get_url:
+    url: "https://github.com/smallstep/certificates/releases/download/v{{ pki_version }}/step-ca_linux_{{ pki_version }}_armv6.tar.gz"
+    dest: /tmp/
+    mode: "0755"
+
+- name: Extract kms plugin
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "/tmp/step-kms-plugin_{{ yubico_kms_plugin_version }}_linux_arm64.tar.gz"
+    dest: /tmp/
+    mode: "0755"
+
+- name: Extract step-ca
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "/tmp/step-ca_linux_{{ pki_version }}_armv6.tar.gz"
+    dest: /tmp/
+    mode: "0755"
+
+- name: Install step-kms-plugin
+  ansible.builtin.shell:
+    cmd: install -D /tmp/step-kms-plugin_{{ yubico_kms_plugin_version }}/step-kms-plugin /usr/bin/step-kms-plugin
+  become: true
+
+- name: Install step-ca
+  ansible.builtin.shell:
+    cmd: install -D /tmp/step-ca_{{ pki_version }}/step-ca /usr/bin/step-ca
+  become: true

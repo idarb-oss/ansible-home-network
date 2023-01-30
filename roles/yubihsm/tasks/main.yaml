@@ -1,0 +1,86 @@
+- name: GIT Clone Yubico HSM
+  ansible.builtin.git:
+    repo: https://github.com/Yubico/yubihsm-shell.git
+    version: "{{ yubico_source_version }}"
+    dest: "{{ config_dir }}/source/yubihsm-shell"
+    clone: true
+  become: false
+  when: yubico_hsm_2_enabled
+
+- name: Install pakcages to build Yubico HSM
+  ansible.builtin.apt:
+    force_apt_get: true
+    autoclean: true
+    autoremove: true
+    update_cache: true
+    state: present
+    pkg:
+      - cmake
+      - gengetopt
+      - libssl-dev
+      - libcurl4-openssl-dev
+      - libedit-dev
+      - libusb-1.0-0-dev
+      - libpcsclite-dev
+      - pkg-config
+      - llvm
+      - clang
+      - help2man
+  when: yubico_hsm_2_enabled
+
+- name: Create build directory
+  ansible.builtin.file:
+    path: "{{ config_dir }}/source/yubihsm-shell/build/"
+    recurse: true
+    state: directory
+    mode: "0755"
+  become: false
+  when: yubico_hsm_2_enabled
+
+- name: Cmake Yubico HSM
+  ansible.builtin.shell:
+    cmd: "cmake .."
+    chdir: "{{ config_dir }}/source/yubihsm-shell/build"
+  become: false
+  when: yubico_hsm_2_enabled
+
+- name: Make Yubico HSM
+  ansible.builtin.shell:
+    cmd: "make"
+    chdir: "{{ config_dir }}/source/yubihsm-shell/build"
+  become: false
+  when: yubico_hsm_2_enabled
+
+- name: Make install Yubico HSM
+  ansible.builtin.shell:
+    cmd: "make install"
+    chdir: "/home/{{ ansible_user }}/source/yubihsm-shell/build"
+  when: yubico_hsm_2_enabled
+
+- name: Remove pakcages used to build Yubico HSM
+  ansible.builtin.apt:
+    force_apt_get: true
+    autoclean: true
+    autoremove: true
+    update_cache: true
+    state: absent
+    pkg:
+      - cmake
+      - gengetopt
+      - libssl-dev
+      - libcurl4-openssl-dev
+      - libedit-dev
+      - libusb-1.0-0-dev
+      - libpcsclite-dev
+      - pkg-config
+      - llvm
+      - clang
+      - help2man
+  when: yubico_hsm_2_enabled
+
+- name: Cleanup Yubico HSM source code
+  ansible.builtin.file:
+    path: "{{ config_dir }}/source"
+    state: absent
+  become: false
+  when: yubico_hsm_2_enabled

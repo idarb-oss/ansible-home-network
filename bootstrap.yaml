@@ -1,6 +1,9 @@
 - name: Initialize
   hosts: all
   become: true
+  tags:
+    - update
+    - docker
   roles:
     - update
     - docker
@@ -8,6 +11,8 @@
 - name: Setup Pi-Hole
   hosts: piholes
   become: true
+  tags:
+    - pihole
   pre_tasks:
     - name: Load configuration
       ansible.builtin.include_vars: "{{ item }}"
@@ -17,3 +22,20 @@
         - config/domain.yaml
   roles:
     - pihole
+
+- name: Setup PKI
+  hosts: pkis
+  become: true
+  tags:
+    - pki
+  pre_tasks:
+    - name: Load configuration
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - config/general.yaml
+        - config/pki.yaml
+  roles:
+    - role: yubihsm
+      tags:
+        - hsm
+    - role: pki

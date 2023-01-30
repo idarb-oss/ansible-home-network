@@ -1,0 +1,16 @@
+# PKI Configuration
+pki_single_mode: true
+pki_version: "0.23.1"
+pki_hostname: pki
+
+
+# PKI Metric Exporter
+pki_metrics_enabled: false
+
+
+# HSM
+yubico_hsm_2_enabled: true
+yubico_source_version: "2.4.0"
+yubico_hsm_2_addr: "/usr/local/lib/pkcs11/yubihsm_pkcs11.so"
+yubico_kms_plugin_version: "0.5.4"
+yubico_kms_plugin_url: "https://github.com/smallstep/step-kms-plugin/releases/download"
